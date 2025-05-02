@@ -1,0 +1,20 @@
+fasttext
+pdfplumber
+transformers
+torch
+datasets
+huggingface-hub
+streamlit
+pillow
+flask
+pydeck
+scikit-learn
+tqdm
+altair
+accelerate
+sentencepiece
+PyPDF2
+deep_translator
+langdetect  # Optional if you're not using it anymore
+# Add any other dependencies as needed
+
