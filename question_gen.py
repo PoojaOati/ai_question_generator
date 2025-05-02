@@ -1,26 +1,18 @@
-import os
 import fasttext
-import requests
 from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
 from PyPDF2 import PdfReader
 from deep_translator import GoogleTranslator
+from huggingface_hub import hf_hub_download
 
-# Ensure the language model file is present
-FASTTEXT_MODEL_PATH = "lid.176.bin"
-FASTTEXT_MODEL_URL = "https://huggingface.co/facebook/fasttext-language-identification/resolve/main/lid.176.bin"
+# Define a function to download the model from Hugging Face
+def download_model_from_huggingface(model_name: str, file_name: str):
+    # This will download the model file from your Hugging Face repo
+    file_path = hf_hub_download(repo_id=model_name, filename=file_name)
+    return file_path
 
-def download_fasttext_model():
-    if not os.path.exists(FASTTEXT_MODEL_PATH):
-        print("Downloading lid.176.bin...")
-        response = requests.get(FASTTEXT_MODEL_URL, stream=True)
-        with open(FASTTEXT_MODEL_PATH, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-        print("Download complete.")
-
-download_fasttext_model()
-lang_model = fasttext.load_model(FASTTEXT_MODEL_PATH)
+# Load language detection model from Hugging Face
+lang_model_path = download_model_from_huggingface("Pooja1218/ai-quiz-generator", "lid.176.bin")
+lang_model = fasttext.load_model(lang_model_path)
 
 # Load question generation model
 model_name = "mrm8488/t5-base-finetuned-question-generation-ap"
@@ -53,12 +45,7 @@ def generate_questions_from_text(text):
     questions = []
 
     for chunk in text_chunks:
-        try:
-            lang_code = lang_model.predict(chunk.strip().replace("\n", " "))[0][0].replace("__label__", "")
-        except Exception as e:
-            questions.append(f"Language detection failed: {e}")
-            continue
-
+        lang_code = lang_model.predict(chunk.strip().replace("\n", " "))[0][0].replace("__label__", "")
         if lang_code != "en":
             try:
                 chunk = GoogleTranslator(source=lang_code, target="en").translate(chunk)
