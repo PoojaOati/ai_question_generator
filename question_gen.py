@@ -11,8 +11,7 @@ def download_model_from_huggingface(model_name: str, file_name: str):
     return file_path
 
 # Load language detection model from Hugging Face
-lang_model_path = download_model_from_huggingface("Pooja1218/ai-quiz-generator", "lid.176.bin")
-lang_model = fasttext.load_model(lang_model_path)
+model = fasttext.load_model("https://huggingface.co/Pooja1218/ai-quiz-generator/raw/main/lid.176.bin")
 
 # Load question generation model
 model_name = "mrm8488/t5-base-finetuned-question-generation-ap"
