@@ -15,6 +15,7 @@ if uploaded_file is not None:
 
     if st.button("Generate Questions"):
         with st.spinner("Extracting text and generating questions..."):
+            # Extracting text from the PDF file
             text = extract_text_from_pdf(uploaded_file)
             questions = generate_questions_from_text(text)
 
@@ -23,7 +24,7 @@ if uploaded_file is not None:
                 for idx, q in enumerate(questions, 1):
                     st.markdown(f"**{idx}.** {q}")
 
-                # Allow download
+                # Allow download functionality for the generated questions
                 output = io.StringIO()
                 for q in questions:
                     output.write(q + "\n")
